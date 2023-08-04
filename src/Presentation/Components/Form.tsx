@@ -13,7 +13,6 @@ export const Form = () => {
   const weightInput = useRef<HTMLInputElement>(null);
 
   async function handleSubmit() {
-    console.log(nameInput.current!.value)
     let data: Marmota = {
       id: "",
       name: nameInput.current!.value,
@@ -23,10 +22,10 @@ export const Form = () => {
       actions: false,
     };
 
-    let res = await marmotaController.createMarmota(data);
+     await marmotaController.createMarmota(data);
 
-    const marmota = [...marmotaState, res];
-    setMarmotaState(marmota);
+    let getAllRes = await marmotaController.getAllMarmotas();
+    setMarmotaState(getAllRes);
   }
 
   return (

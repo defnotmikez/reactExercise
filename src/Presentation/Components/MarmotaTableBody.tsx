@@ -16,15 +16,12 @@ export const TableBody = () => {
   const weightInput = useRef<HTMLInputElement>(null);
 
   async function onDelete(item: Marmota) {
-    let res = await marmotaController.deleteMarmota(item);
-    let marmotas = [...marmotaState];
-    let index = marmotaState.findIndex(
-      (marmota: Marmota) => marmota.id === item.id
-    );
+    let deleteRes = await marmotaController.deleteMarmota(item);
+    
 
-    if (res === "Entity has been deleted") {
-      marmotas.splice(index, 1);
-      setMarmotaState(marmotas);
+    if (deleteRes === "Entity has been deleted") {
+      let getAllRes = await marmotaController.getAllMarmotas();
+      setMarmotaState(getAllRes);
     }
   }
 
@@ -37,14 +34,10 @@ export const TableBody = () => {
       weight: parseFloat(weightInput.current!.value),
       actions: false,
     };
-    let res = await marmotaController.updateMarmota(data);
+    await marmotaController.updateMarmota(data);
 
-    let marmotas = [...marmotaState];
-    let index = marmotaState.findIndex(
-      (marmota: Marmota) => marmota.id === res.id
-    );
-    marmotas[index] = res;
-    setMarmotaState(marmotas);
+    let getAllRes = await marmotaController.getAllMarmotas();
+    setMarmotaState(getAllRes);
   }
   return (
     <>
