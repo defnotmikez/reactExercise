@@ -4,6 +4,7 @@ import './App.css';
 import { Form } from './Presentation/Components/Form';
 import { MarmotaContextProvider } from './Infrastructure/Context/MarmotaContext';
 import { MarmotaTable } from './Presentation/Components/MarmotaTable';
+import { MarmotaView } from './Presentation/Components/MarmotaView';
 
 
 
@@ -12,8 +13,7 @@ import { MarmotaTable } from './Presentation/Components/MarmotaTable';
 function App() {
   return (
     <MarmotaContextProvider> 
-    <Form />
-    <MarmotaTable />
+    <MarmotaView />
     </MarmotaContextProvider>
   );
 }
