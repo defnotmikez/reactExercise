@@ -1,4 +1,4 @@
-export function ageValidation (age : any) {
+export function isAgeInvalid (age : any) {
     if(age <= 0 || !age || isNaN(age)){
       return true;
     } else {
