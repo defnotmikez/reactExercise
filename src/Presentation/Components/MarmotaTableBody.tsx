@@ -1,9 +1,18 @@
-import { useContext, useRef } from "react";
+import { useContext, useRef, useState } from "react";
 import { MarmotaContext } from "../../Infrastructure/Context/MarmotaContext";
 import { MarmotaController } from "../../Infrastructure/Controllers/ServiceController/MarmotaController";
 import { Marmota } from "../../Infrastructure/Models/Marmota";
+import { isAgeInvalid } from "../../Validations/AgeValidation";
 
 let tempId: string;
+const errorState = {
+  isNameErrorActive: false,
+  isAgeErrorStateActive: false,
+};
+
+const AGE_ERROR_MESSAGE =
+  "Age cannot be empty and must be a number greater than 0";
+const NAME_ERROR_MESSAGE = "Name cannot be empty";
 
 export const TableBody = () => {
   const { marmota } = useContext(MarmotaContext);
@@ -14,10 +23,29 @@ export const TableBody = () => {
   const ageInput = useRef<HTMLInputElement>(null);
   const heightInput = useRef<HTMLInputElement>(null);
   const weightInput = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState(errorState);
 
+  function checkError() {
+    const stateCopy = error;
+
+    if (isAgeInvalid(nameInput.current!.value))
+      stateCopy.isNameErrorActive = true;
+
+    if (isAgeInvalid(ageInput.current!.value))
+      stateCopy.isAgeErrorStateActive = true;
+
+    setError({
+      ...stateCopy,
+    });
+
+    if (error.isNameErrorActive || error.isAgeErrorStateActive) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   async function onDelete(item: Marmota) {
     let deleteRes = await marmotaController.deleteMarmota(item);
-    
 
     if (deleteRes === "Entity has been deleted") {
       let getAllRes = await marmotaController.getAllMarmotas();
@@ -34,10 +62,13 @@ export const TableBody = () => {
       weight: parseFloat(weightInput.current!.value),
       actions: false,
     };
+    if (!checkError()) {
+      
     await marmotaController.updateMarmota(data);
 
     let getAllRes = await marmotaController.getAllMarmotas();
     setMarmotaState(getAllRes);
+    }
   }
   return (
     <>
@@ -52,6 +83,9 @@ export const TableBody = () => {
                     type="text"
                     defaultValue={item.name}
                   ></input>
+                  {error.isNameErrorActive && (
+                    <p style={{ color: "red" }}>{NAME_ERROR_MESSAGE}</p>
+                  )}
                 </td>
                 <td>
                   <input
@@ -59,6 +93,9 @@ export const TableBody = () => {
                     type="text"
                     defaultValue={item.age}
                   ></input>
+                  {error.isAgeErrorStateActive && (
+                    <p style={{ color: "red" }}>{AGE_ERROR_MESSAGE}</p>
+                  )}
                 </td>
                 <td>
                   <input

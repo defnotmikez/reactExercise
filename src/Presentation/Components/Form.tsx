@@ -25,18 +25,26 @@ export const Form = () => {
   const [error, setError] = useState(errorState);
 
   function checkError() {
-    // const stateCopy = error;
-    // if (isNameInvalid(nameInput.current!.value))
-    //   stateCopy.isNameErrorActive = true;
+    const stateCopy = error;
 
-    // if (isAgeInvalid(ageInput.current!.value))
-    //   stateCopy.isAgeErrorStateActive = true;
-    // setError(stateCopy);
+    if (isAgeInvalid(nameInput.current!.value)){
+      stateCopy.isNameErrorActive = true;
+    } else {
+      stateCopy.isNameErrorActive = false;
+    }
+      
+
+    if (isAgeInvalid(ageInput.current!.value)) {
+      stateCopy.isAgeErrorStateActive = true;
+    } else {
+      stateCopy.isAgeErrorStateActive = false;
+    }
+     
+
     setError({
-      isNameErrorActive: isNameInvalid(nameInput.current!.value),
-      isAgeErrorStateActive: isAgeInvalid(ageInput.current!.value)
-    })
-  
+      ...stateCopy,
+    });
+
     if (error.isNameErrorActive || error.isAgeErrorStateActive) {
       return true;
     } else {
@@ -58,16 +66,15 @@ export const Form = () => {
       weight: weight,
       actions: false,
     };
-    
+
     if (!checkError()) {
-      
       await marmotaController.createMarmota(data);
 
       let getAllRes = await marmotaController.getAllMarmotas();
       setMarmotaState(getAllRes);
     }
   }
-  
+
   return (
     <>
       <div>
