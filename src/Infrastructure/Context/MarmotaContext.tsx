@@ -9,7 +9,8 @@ export const MarmotaContextProvider: React.FunctionComponent<any> = ({
   children,
 }) => {
   const [marmotaState, setMarmotaState] = React.useState(new Array<Marmota>());
-  
+ 
+
 
   const marmotaController = new MarmotaController();
 
@@ -22,7 +23,6 @@ export const MarmotaContextProvider: React.FunctionComponent<any> = ({
   
   const context = {
     marmota: [marmotaState, setMarmotaState],
-    
   };
 
   return (
