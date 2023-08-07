@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useRef, useState } from "react";
+import { FormEvent, useContext, useEffect, useRef, useState } from "react";
 import { Marmota } from "../../Infrastructure/Models/Marmota";
 import { MarmotaContext } from "../../Infrastructure/Context/MarmotaContext";
 import { MarmotaController } from "../../Infrastructure/Controllers/ServiceController/MarmotaController";
@@ -23,7 +23,27 @@ export const Form = () => {
   const heightInput = useRef<HTMLInputElement>(null);
   const weightInput = useRef<HTMLInputElement>(null);
   const [error, setError] = useState(errorState);
+
+  function checkError() {
+    // const stateCopy = error;
+    // if (isNameInvalid(nameInput.current!.value))
+    //   stateCopy.isNameErrorActive = true;
+
+    // if (isAgeInvalid(ageInput.current!.value))
+    //   stateCopy.isAgeErrorStateActive = true;
+    // setError(stateCopy);
+    setError({
+      isNameErrorActive: isNameInvalid(nameInput.current!.value),
+      isAgeErrorStateActive: isAgeInvalid(ageInput.current!.value)
+    })
   
+    if (error.isNameErrorActive || error.isAgeErrorStateActive) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   async function handleSubmit() {
     let name = nameInput.current!.value;
     let age = parseFloat(ageInput.current!.value);
@@ -38,42 +58,16 @@ export const Form = () => {
       weight: weight,
       actions: false,
     };
-
-    if (isNameInvalid(nameInput.current!.value)) {
-      const state = {
-        isNameErrorActive: true,
-        isAgeErrorStateActive: false,
-      };
-     setError(state);
-    }
-
-    if (isAgeInvalid(ageInput.current!.value)) {
-      const state = {
-        isNameErrorActive: false,
-        isAgeErrorStateActive: true,
-      };
-     setError(state);
-    }
-
-    if(isNameInvalid(nameInput.current!.value) && isAgeInvalid(ageInput.current!.value)) {
-      const state = {
-        isNameErrorActive: true,
-        isAgeErrorStateActive: true,
-      };
-     setError(state);
-    }
-
-    if (
-      !isNameInvalid(nameInput.current!.value) &&
-      !isAgeInvalid(ageInput.current!.value)
-    ) {
+    
+    if (!checkError()) {
+      
       await marmotaController.createMarmota(data);
 
       let getAllRes = await marmotaController.getAllMarmotas();
       setMarmotaState(getAllRes);
     }
   }
- 
+  
   return (
     <>
       <div>
@@ -85,12 +79,16 @@ export const Form = () => {
           name="name"
           required
         ></input>
-        {error.isNameErrorActive && <p style={{ color: "red" }}>{NAME_ERROR_MESSAGE}</p>}
+        {error.isNameErrorActive && (
+          <p style={{ color: "red" }}>{NAME_ERROR_MESSAGE}</p>
+        )}
       </div>
       <div>
         <label htmlFor="age">Age</label>
         <input ref={ageInput} type="text" id="age" name="age" required></input>
-        {error.isAgeErrorStateActive && <p style={{ color: "red" }}>{AGE_ERROR_MESSAGE}</p>}
+        {error.isAgeErrorStateActive && (
+          <p style={{ color: "red" }}>{AGE_ERROR_MESSAGE}</p>
+        )}
       </div>
       <div>
         <label htmlFor="height">Height</label>
